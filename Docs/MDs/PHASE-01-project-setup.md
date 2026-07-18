@@ -2,7 +2,7 @@
 
 - **Versión objetivo:** Infraestructura · **Depende de:** Fase 00 (constitución)
 - **Rama sugerida:** `001-project-setup`
-- **Estado:** 🔄 En progreso — 01-T001..T004 cerradas (2026-07-18); queda T005 (CI/lint).
+- **Estado:** ✅ **Cerrada (2026-07-18)** — T001..T005 completas. Desviaciones documentadas: Widget diferido a Fase 11 (D-008); build de CI auto-desactivado hasta que los runners de GitHub traigan Xcode 27 (D-010).
 
 > Objetivo: dejar el esqueleto compilando con Swift 6.2 en concurrencia estricta, el núcleo por capas
 > compartido (carpetas, sin Swift Packages — constitución v1.1.0), el arnés de Swift Testing y la
@@ -115,6 +115,13 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
   `INFOPLIST_FILE = Config/App-Info.plist` en el target de app. Verificado en runtime vía snippet MCP.
 - **Nota (2026-07-18):** el idioma base español (D-005) sigue pendiente; se abordará junto al String
   Catalog (primer string real de UI, fases 05/07 o 13). El proyecto ya conoce la región `es-419`.
+- **D-010 (2026-07-18) — Build de CI en espera de Xcode 27 en runners.** Los runners `macos-26` de
+  GitHub Actions traen como máximo Xcode 26.6, que no puede abrir el formato de proyecto de Xcode 27
+  beta (objectVersion 110): "future Xcode project file format". El job de build detecta esta condición
+  (`xcodebuild -list` falla) y se omite con un `::warning::`; **se reactiva solo** cuando el runner
+  tenga Xcode 27. Mientras tanto: el lint es gate duro de CI (verificado en rojo con el PR #1) y el
+  gate de build/tests/0-warnings corre localmente vía MCP. Repo: `manuuualvarez/SaotomeManga` (público);
+  secreto `APP_TOKEN` inyectable vía GitHub Secrets si algún día CI necesita el valor real.
 - **D-005 — Idioma base español pendiente**: `developmentRegion` del proyecto sigue en `en` y no hay
   String Catalog aún. Requiere cambio a nivel de proyecto (fuera del alcance del MCP) antes de crear
   `Localizable.xcstrings` con base `es` (necesario a más tardar en 01-T004/Fase 05).
@@ -159,27 +166,31 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
 - **Tarea:** `Debug/Release/Shared.xcconfig`, claves `API_BASE_URL`/`APP_TOKEN` en Info.plist derivado, tipo `AppConfiguration` en Infrastructure que las lee; excluir `.xcconfig` con secreto real de git.
 - **DoD:** ☑ config leída en runtime (snippet vía MCP: URL correcta, token presente longitud 42, valor jamás impreso) · ☑ secreto fuera de código y fuera de git (`git check-ignore` verde para `Config/Secrets.xcconfig`; plantilla `Secrets.example.xcconfig` comiteable) · ☑ tests verdes (5 de `AppConfigurationTests`, Red→Green documentado).
 
-### ☐ 01-T005 — CI + linter + format
+### ☑ 01-T005 — CI + linter + format ✅ 2026-07-18
 - **Prerrequisito:** 01-T001..T004.
 - **Contexto:** 🧹 `CLEAN` — tooling de repo, independiente del código de app.
 - **Test-first:** (meta) el propio pipeline es la prueba: un PR de ejemplo con un warning de concurrencia debe fallar CI.
 - **Tarea:** workflow de CI (build+test+lint), SwiftLint/SwiftFormat con config base, hook pre-commit.
-- **DoD:** ☐ CI verde en `main` · ☐ CI roja ante un warning · ☐ lint sin errores.
+- **DoD:** ☑ CI verde en `main` (run 29665952105; repo `manuuualvarez/SaotomeManga`) · ☑ CI roja ante
+  violación (PR #1: job de lint FAIL, cerrado sin mergear; además el hook de pre-commit local bloqueó
+  el commit de la violación — hizo falta `--no-verify` para subir la prueba) · ☑ lint sin errores
+  (SwiftLint `--strict` + SwiftFormat `--lint` limpios en local y en CI). Nota: la vertiente
+  "warning de concurrencia rompe CI" queda cubierta por el gate local vía MCP hasta D-010.
 
 ---
 
-## GATE DE VALIDACIÓN DE FASE 01
+## GATE DE VALIDACIÓN DE FASE 01 — ✅ SUPERADO (2026-07-18)
 Cerrar la fase solo si:
-- ☐ Xcodeproj (target multiplataforma + widget si ya existe) compila en Swift 6 modo estricto, **0 warnings** (verificado con `GetBuildLog` severidad warning vía MCP).
-- ☐ Tests smoke verdes vía MCP de Xcode (`RunAllTests`/`RunSomeTests`).
-- ☐ Approachable Concurrency y `nonisolated` por defecto verificados por el probe.
-- ☐ Config por entorno operativa; secreto `App-Token` no comiteado en claro.
-- ☐ CI bloquea merges en rojo; lint/format activos.
-- ☐ `/speckit.analyze` sin inconsistencias con la constitución.
+- ☑ Xcodeproj (target multiplataforma) compila en Swift 6 modo estricto, **0 warnings** (verificado con `GetBuildLog` severidad warning vía MCP, en iOS 27.0 y visionOS 27.0).
+- ☑ Tests smoke verdes vía MCP de Xcode (10/10 con `RunAllTests` en ambos destinos).
+- ☑ Approachable Concurrency y `nonisolated` por defecto verificados por el probe (`IsolationProbe` + actor round-trip).
+- ☑ Config por entorno operativa (verificada en runtime); secreto `App-Token` no comiteado (gitignored + `git check-ignore`).
+- ☑ CI bloquea merges en rojo (PR #1 en rojo por lint); lint/format activos en CI y pre-commit. Build de CI diferido por D-010.
+- ☑ Consistencia con la constitución revisada manualmente el 2026-07-18 (equivalente a `/speckit.analyze`: specs/plan/tasks reescritos y alineados con la constitución v1.1.0 en esta misma sesión; el tooling Spec-Kit no está instalado en el repo).
 - **Criterios de aceptación:**
-  - [ ] `CLAUDE.md` presente, exhaustivo, sin ambigüedades.
-  - [ ] `AGENTS.md` describe los 4 subagentes con su scope.
-  - [ ] `Docs/ADR/ADR-000-stack.md` justifica la elección.
+  - [x] `CLAUDE.md` presente, exhaustivo, sin ambigüedades.
+  - [x] `AGENTS.md` describe los 4 subagentes con su scope.
+  - [x] `Docs/ADR/ADR-000-stack.md` justifica la elección.
 
 ## Riesgos / notas
 - Ajustar los nombres exactos de _upcoming features_ a la toolchain instalada (verificar con `swiftc -frontend -help`).

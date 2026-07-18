@@ -24,11 +24,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		FE56FD5D300C20D100DEC850 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
-		FE56FD5E300C20D100DEC850 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		FE34516330079741008A0112 /* SaotomeManga.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SaotomeManga.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE34517230079741008A0112 /* SaotomeMangaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SaotomeMangaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE34517C30079741008A0112 /* SaotomeMangaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SaotomeMangaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE56FD5D300C20D100DEC850 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		FE56FD5E300C20D100DEC850 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
