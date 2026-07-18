@@ -1,0 +1,16 @@
+#!/bin/sh
+# Hook de pre-commit (01-T005): verifica formato y lint antes de cada commit.
+# Activación (una vez por clon): git config core.hooksPath Scripts/git-hooks
+set -e
+
+if command -v swiftformat >/dev/null 2>&1; then
+    swiftformat --lint . || { echo "✗ SwiftFormat encontró problemas (swiftformat . para arreglar)"; exit 1; }
+else
+    echo "aviso: swiftformat no instalado (brew install swiftformat) — se omite"
+fi
+
+if command -v swiftlint >/dev/null 2>&1; then
+    swiftlint lint --strict --quiet || { echo "✗ SwiftLint encontró problemas"; exit 1; }
+else
+    echo "aviso: swiftlint no instalado (brew install swiftlint) — se omite"
+fi

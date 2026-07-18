@@ -1,0 +1,10 @@
+// Config/Shared.xcconfig — 01-T004
+// Valores comunes a todos los entornos. El secreto real (APP_TOKEN) vive en
+// Secrets.xcconfig (fuera de git); copia Secrets.example.xcconfig para crearlo.
+// Nota: $() esquiva el "//" que xcconfig interpretaría como comentario.
+
+API_BASE_URL = https:/$()/mymanga-acacademy-5607149ebe3d.herokuapp.com
+APP_TOKEN =
+
+// Va al final: la última asignación gana, así Secrets sobrescribe los defaults.
+#include? "Secrets.xcconfig"

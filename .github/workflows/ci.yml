@@ -1,0 +1,62 @@
+# CI — 01-T005. Único contexto donde se permite xcodebuild (ver CLAUDE.md):
+# el trabajo local va siempre por el MCP de Xcode.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test:
+    name: Build & Test
+    runs-on: macos-26
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Seleccionar Xcode (el más nuevo disponible en el runner)
+        run: |
+          XCODE_APP=$(ls -d /Applications/Xcode*.app | sort -V | tail -1)
+          echo "Usando $XCODE_APP"
+          sudo xcode-select -s "$XCODE_APP"
+          xcodebuild -version
+
+      - name: Secrets de CI (APP_TOKEN opcional, nunca en claro en el repo)
+        env:
+          APP_TOKEN: ${{ secrets.APP_TOKEN }}
+        run: |
+          if [ -n "$APP_TOKEN" ]; then
+            printf '// Generado por CI\nAPP_TOKEN = %s\n' "$APP_TOKEN" > Config/Secrets.xcconfig
+          fi
+
+      - name: Elegir simulador iPhone disponible
+        id: sim
+        run: |
+          NAME=$(xcrun simctl list devices available | grep -Eo 'iPhone [^(]+' | head -1 | xargs)
+          echo "name=${NAME:-iPhone 17}" >> "$GITHUB_OUTPUT"
+          echo "Simulador elegido: $NAME"
+
+      - name: Build + tests (warnings-as-errors viene del proyecto)
+        run: |
+          set -o pipefail
+          xcodebuild -project SaotomeManga.xcodeproj \
+            -scheme SaotomeManga \
+            -destination "platform=iOS Simulator,name=${{ steps.sim.outputs.name }}" \
+            test
+
+  lint:
+    name: SwiftLint + SwiftFormat
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Instalar herramientas
+        run: brew install swiftlint swiftformat
+
+      - name: SwiftLint (strict)
+        run: swiftlint lint --strict
+
+      - name: SwiftFormat (solo verificación)
+        run: swiftformat --lint .

@@ -1,0 +1,10 @@
+# macOS
+.DS_Store
+
+# Xcode
+xcuserdata/
+DerivedData/
+*.xcresult
+
+# Secretos locales (01-T004) — nunca comitear el App-Token real
+Config/Secrets.xcconfig

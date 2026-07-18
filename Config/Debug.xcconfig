@@ -1,0 +1,2 @@
+// Config/Debug.xcconfig — 01-T004
+#include "Shared.xcconfig"

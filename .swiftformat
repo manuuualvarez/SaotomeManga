@@ -1,0 +1,4 @@
+# Configuración base de SwiftFormat (01-T005). CI y pre-commit corren con --lint.
+--swiftversion 6.2
+--exclude Docs,Scripts,.github
+--indent 4

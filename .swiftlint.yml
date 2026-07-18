@@ -1,0 +1,10 @@
+# Configuración base de SwiftLint (01-T005). Reglas por defecto; CI corre con --strict.
+# El formato lo gobierna SwiftFormat: se desactivan las reglas de SwiftLint que chocan con él.
+disabled_rules:
+  - trailing_comma
+excluded:
+  - Docs
+  - Config
+  - Scripts
+  - .github
+  - DerivedData
