@@ -1,0 +1,6 @@
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.payload.signature",
+  "expiresIn": 2592000,
+  "tokenType": "Bearer",
+  "tokenUse": "refresh"
+}

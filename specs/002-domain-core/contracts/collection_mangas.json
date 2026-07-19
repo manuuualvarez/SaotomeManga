@@ -1,0 +1,55 @@
+[
+  {
+    "manga": {
+      "mainPicture": "https://cdn.myanimelist.net/images/manga/2/253146.jpg",
+      "titleJapanese": "ワンピース",
+      "themes": [
+        {
+          "id": "550E8400-E29B-41D4-A716-446655440002",
+          "theme": "Adventure"
+        }
+      ],
+      "startDate": "1997-07-25T00:00:00Z",
+      "titleEnglish": "One Piece",
+      "genres": [
+        {
+          "id": "550E8400-E29B-41D4-A716-446655440001",
+          "genre": "Action"
+        }
+      ],
+      "volumes": 107,
+      "background": "One Piece is the best-selling manga series in history, with over 500 million copies in circulation worldwide.",
+      "score": 9.21,
+      "sypnosis": "Gol D. Roger was known as the Pirate King, the strongest and most infamous being to have sailed the Grand Line. The capture and execution of Roger by the World Government brought a change throughout the world. His last words before his death revealed the existence of the greatest treasure in the world, One Piece.",
+      "status": "currently_publishing",
+      "chapters": 1100,
+      "demographics": [
+        {
+          "id": "550E8400-E29B-41D4-A716-446655440003",
+          "demographic": "Shounen"
+        }
+      ],
+      "id": 13,
+      "url": "https://myanimelist.net/manga/13/One_Piece",
+      "title": "One Piece",
+      "authors": [
+        {
+          "id": "550E8400-E29B-41D4-A716-446655440000",
+          "firstName": "Eiichiro",
+          "role": "Story & Art",
+          "lastName": "Oda"
+        }
+      ]
+    },
+    "id": "660E8400-E29B-41D4-A716-446655440000",
+    "readingVolume": 3,
+    "completeCollection": false,
+    "volumesOwned": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  }
+]

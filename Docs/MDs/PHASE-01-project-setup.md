@@ -60,9 +60,9 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
   │   ├── Application/               (casos de uso, stores @Observable)
   │   │   └── UseCases/ F02+ · Stores/ F05+
   │   ├── Domain/                    (modelos puros, protocolos, errores — sin frameworks)
-  │   │   └── Models/ F02 · Repositories/ F02 · Errors/ F02
+  │   │   └── Models/ F02 ✓ · Errors/ F02 ✓ · Validation/ F02 ✓ · Repositories/ F03
   │   ├── Infrastructure/            (implementaciones de protocolos)
-  │   │   └── Configuration/ hoy · Networking/ F03 · Security/ F04 · Persistence/ F06
+  │   │   └── Configuration/ hoy · DTO/ F02 ✓ · Networking/ F03 · Security/ F04 · Persistence/ F06
   │   └── Assets.xcassets · Resources/ (String Catalog — F05/F07)
   ├── SaotomeMangaTests/             (Swift Testing; unit + contract + integration)
   ├── SaotomeMangaUITests/           (XCUITest)
@@ -70,6 +70,9 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
   ├── Scripts/git-hooks/ · .github/workflows/
   └── SaotomeManga.xcodeproj
   ```
+  _Enmienda F02 (2026-07-18, D-017):_ se añaden `Domain/Validation/` (validadores puros) e
+  `Infrastructure/DTO/` (wire-format + mapping); `Repositories/` se pospone de F02 a F03 — los
+  protocolos de repositorio nacen con la capa de red. `✓` = subfolder ya creado por su fase.
 - **Ajustes de compilación clave** (a fijar y verificar):
   `SWIFT_STRICT_CONCURRENCY = complete`, modo de lenguaje 6, `SWIFT_APPROACHABLE_CONCURRENCY = YES`,
   features experimentales/upcoming asociadas (`NonisolatedNonsendingByDefault`, `InferSendableFromCaptures`, etc.),

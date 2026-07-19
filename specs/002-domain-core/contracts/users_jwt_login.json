@@ -1,0 +1,5 @@
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJzYW90b21lLW1hbmdhIiwiZXhwIjoxNzA0MDY3MjAwLCJpYXQiOjE3MDM5ODA4MDAsInVzZXJfaWQiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDAiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20ifQ.abc123",
+  "expiresIn": 86400,
+  "tokenType": "Bearer"
+}
