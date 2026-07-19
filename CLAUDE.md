@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 "Mis Mangas" (Xcode project name: **SaotomeManga**) — a SwiftUI app for browsing a remote catalog of 64k+ mangas and managing a personal collection, with authenticated cloud sync. Targets iOS/iPadOS, visionOS, and a WidgetKit extension.
 
-**Current state:** the Xcode template has been cleaned out (minimal `App`/`ContentView` placeholders, no SwiftData yet) and Phase 01 is in progress: the layered core lives as folders `Domain/`, `Application/`, `Infrastructure/` inside the app target, with smoke tests in `SaotomeMangaTests`. The spec suite in `Docs/MDs/` drives all implementation, phase by phase via Spec-Driven Development:
+**Current state:** Phase 01 (project setup) is **CLOSED** — tag `phase-01-project-setup`, repo `manuuualvarez/SaotomeManga`, 10/10 tests green, 0 warnings. The four layers exist as folders (`Presentation/`, `Application/`, `Domain/`, `Infrastructure/`) with smoke tests in `SaotomeMangaTests`. **The Swift 6.2 strict-concurrency configuration is complete and probe-verified: do NOT touch build settings or the pbxproj for it — ever.** Next up: Phase 02 (domain core + contracts, `Docs/MDs/PHASE-02-domain-core.md`). The spec suite in `Docs/MDs/` drives all implementation, phase by phase via Spec-Driven Development:
 
 - `Docs/MDs/memory/constitution.md` — **non-negotiable governance rules. Read it before implementing anything; on any conflict, the constitution wins.**
 - `Docs/MDs/000-roadmap.md` — phase index, dependency graph, validation gates.
