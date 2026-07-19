@@ -20,7 +20,8 @@
 ### Requisitos funcionales
 - **FR-028** — Modelos `@Model`: `MangaEntity` (con relaciones/valores para autores, géneros, temas, demografías embebidos o relacionados), `CollectionItemEntity`, `CachedPageEntity` (opcional para paginación offline), `UserProfileEntity` (mínimo).
 - **FR-029** — `VersionedSchema` v1 + `SchemaMigrationPlan` (aunque v1 no migre nada, la infraestructura queda lista).
-- **FR-030** — `ModelContainer` único configurable con tres modos: **producción en contenedor de App Group** (`ModelConfiguration(groupContainer: .identifier("group.<bundle>"))`, para que el store se propague automáticamente al widget — ver Fase 11), producción estándar (fallback) y **en memoria** para tests (`isStoredInMemoryOnly: true`). El esquema vive en `Infrastructure/` (núcleo compartido) con target membership en la app y en la extensión de widget.
+- **FR-030** — `ModelContainer` único configurable con tres modos: **producción en contenedor de App Group** (`ModelConfiguration(groupContainer: .identifier("group.cloud.manuelalvarez.SaotomeManga"))`, para que el store se propague automáticamente al widget — ver Fase 11), producción estándar (fallback) y **en memoria** para tests (`isStoredInMemoryOnly: true`). El esquema vive en `Infrastructure/` (núcleo compartido) con target membership en la app y en la extensión de widget.
+- **FR-030b** — **Capability App Groups activada al abrir esta fase** (aclaración 2026-07-18): el usuario añade la capability en **Signing & Capabilities** de **ambos targets** — `SaotomeManga` y `MisMangasWidgetExtension` (ya existe, ver enmienda D-008 de la Fase 01) — con el **mismo** identificador `group.cloud.manuelalvarez.SaotomeManga`. El store nace directamente en el contenedor compartido (nunca hay que "mudarlo"); la Fase 11 **verifica** el acceso desde la extensión, no lo activa.
 - **FR-031** — `PersistenceActor` (`@ModelActor`) para lecturas/escrituras fuera del MainActor.
 - **FR-032** — Repositorios: `MangaCache` (upsert/fetch de mangas), `CollectionStore` (CRUD local de colección) con mapping `@Model`↔Domain.
 - **FR-033** — Los `@Model` **no** salen de Infrastructure; Presentation solo ve tipos de Domain.
@@ -53,11 +54,11 @@ La lógica de sincronización nube↔local (Fase 09); UI (Fase 07/09).
 ## TASKS — Ejecución (TDD)
 
 ### ☐ 06-T001 — Esquema v1 y `ModelContainer`
-- **Prerrequisito:** Fase 02 aprobada.
+- **Prerrequisito:** Fase 02 aprobada. **Acción previa del usuario (FR-030b):** capability App Groups en ambos targets (Xcode UI).
 - **Contexto:** 🧹 `CLEAN` — módulo de persistencia nuevo.
 - **Test-first:** crear `ModelContainer` en memoria y afirmar que el esquema v1 se instancia; insertar y contar entidades básicas.
-- **Tarea:** `@Model` de FR-028, `SchemaV1`, factoría de `ModelContainer` (real e in-memory).
-- **DoD:** ☐ contenedor en memoria operativo · ☐ modelos instanciables · ☐ compila en estricto.
+- **Tarea:** `@Model` de FR-028, `SchemaV1`, factoría de `ModelContainer` (App Group real e in-memory). Los `@Model` nuevos de `Infrastructure/` necesitan **membership también en el widget** (la membership es por archivo — nota de la Fase 11).
+- **DoD:** ☐ contenedor en memoria operativo · ☐ modelos instanciables · ☐ entitlement App Group activo en app y widget · ☐ compila en estricto.
 
 ### ☐ 06-T002 — Migraciones versionadas (infra)
 - **Prerrequisito:** 06-T001.
@@ -84,7 +85,7 @@ La lógica de sincronización nube↔local (Fase 09); UI (Fase 07/09).
 
 ## GATE DE VALIDACIÓN DE FASE 06
 - ☐ SwiftData operativo: esquema v1, migraciones listas, `ModelContainer` (App Group + real + in-memory).
-- ☐ El esquema es accesible desde el target de widget (membership de los archivos de `Infrastructure/`); la config de producción usa el contenedor de App Group.
+- ☐ El esquema es accesible desde el target de widget (membership de los archivos de `Infrastructure/`); la config de producción usa el contenedor de App Group y la **capability está activa en ambos targets con el mismo identificador** (FR-030b).
 - ☐ Acceso concurrente seguro por `ModelActor`, sin data races (tests concurrentes verdes).
 - ☐ Repositorios con upsert idempotente y mapping fiel; `@Model` encapsulado en Infrastructure.
 - ☐ Cobertura ≥ 85%; 0 warnings de concurrencia; `/speckit.analyze` OK.

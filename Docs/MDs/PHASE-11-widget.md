@@ -8,8 +8,9 @@
 > tras la Fase 02 por decisión del usuario (es configuración estructural; ver enmienda D-008 en
 > `PHASE-01-project-setup.md`), con Swift 6 estricto + warnings-as-errors y el núcleo
 > (Domain/Application/Infrastructure) compartido por target membership. Hoy contiene la **plantilla** de
-> Xcode. Sigue siendo trabajo de ESTA fase: App Group + store compartido, provider, vistas, refresco y
-> deep-link. Ojo: la membership quedó registrada **por archivo** — los archivos del núcleo creados en
+> Xcode. Sigue siendo trabajo de ESTA fase: verificar el store compartido desde la extensión (el
+> entitlement App Group se activa en la Fase 06 — FR-030b), provider, vistas, refresco y deep-link.
+> Ojo: la membership quedó registrada **por archivo** — los archivos del núcleo creados en
 > fases posteriores (p. ej. los `@Model` de la Fase 06) deben marcarse también para el widget.
 
 > Objetivo: cumplir el requisito Deluxe de **widget estático** que muestra los mangas que el usuario está leyendo
@@ -27,7 +28,7 @@
 - **US-036** — Como usuario, quiero **tocar un manga del widget y abrir directamente su detalle** en la app.
 
 ### Requisitos funcionales
-- **FR-061** — **App Group compartido** entre el target de app (iOS/iPadOS), el widget (y visionOS si aplica): entitlement `com.apple.security.application-groups` con el mismo identificador `group.<bundle>` en todos.
+- **FR-061** — **App Group compartido** entre el target de app (iOS/iPadOS), el widget (y visionOS si aplica): entitlement `com.apple.security.application-groups` con el mismo identificador `group.cloud.manuelalvarez.SaotomeManga` en todos. **Aclaración 2026-07-18:** la capability se **activa en la Fase 06** (FR-030b, al nacer el store en el contenedor compartido); aquí se **verifica** el acceso real desde la extensión.
 - **FR-062** — **SwiftData en contenedor de App Group:** el `ModelContainer` (Fase 06) se configura con `ModelConfiguration(groupContainer: .identifier("group.<bundle>"))` para que el store viva en el contenedor compartido y **se propague automáticamente** al widget. La app y el widget abren el **mismo** almacén; el widget **no** copia ni serializa snapshots aparte.
 - **FR-063** — El widget consulta SwiftData (los `@Model` compartidos del núcleo) para obtener los ítems "en lectura" (colección con `readingVolume != nil`), ordenados y limitados según el tamaño del widget. Acceso **solo lectura** desde la extensión.
 - **FR-064** — `TimelineProvider` que lee de SwiftData y genera entradas; la app invoca `WidgetCenter.shared.reloadAllTimelines()` tras cambios en la colección/lectura (Fase 09) para refrescar (SwiftData no notifica a la extensión por sí solo).
@@ -48,7 +49,7 @@ Widgets interactivos con App Intents de acción (posible extra futuro); Live Act
 
 ## PLAN — Cómo (técnico)
 
-- **Entitlements:** activar App Group con el mismo `group.<bundle>` en app, widget y (si aplica) visionOS. Verificar en firma de cada target (se cierra en Fase 13-T005/T006).
+- **Entitlements:** el App Group llega **ya activo desde la Fase 06** (FR-030b) en app y widget con `group.cloud.manuelalvarez.SaotomeManga`; aquí se verifica el acceso desde la extensión y la firma de cada target (se cierra en Fase 13-T005/T006).
 - **Configuración de SwiftData (ajuste en Fase 06):** el `ModelContainer` de producción usa `ModelConfiguration(groupContainer: .identifier("group.<bundle>"))`. Con esto el fichero del store se crea en el contenedor del App Group y el widget, al construir su propio `ModelContainer` con el **mismo esquema y misma configuración de grupo**, abre el mismo almacén. El esquema vive en `Infrastructure/` (núcleo compartido, Fase 06) y sus archivos tienen target membership en la extensión, por lo que el widget lo usa sin duplicar modelos.
 - **Lectura en el widget:** el `ReadingTimelineProvider` crea un `ModelContainer` (o usa un `@ModelActor` de solo lectura) apuntando a la configuración de grupo y hace un `FetchDescriptor` de la colección con `readingVolume != nil`, orden por última actualización y `fetchLimit` según tamaño.
 - **Refresco:** la app llama `WidgetCenter.shared.reloadAllTimelines()` al terminar `syncNow()`/editar el tomo en lectura (enganche en Fase 09). El provider también puede fijar una política de `.after(...)` conservadora como red de seguridad.
@@ -64,12 +65,12 @@ Widgets interactivos con App Intents de acción (posible extra futuro); Live Act
 
 ## TASKS — Ejecución (TDD)
 
-### ☐ 11-T001 — App Group + SwiftData en contenedor compartido
-- **Prerrequisito:** Fase 06 y Fase 09 aprobadas.
+### ☐ 11-T001 — SwiftData compartido por App Group (verificación desde la extensión)
+- **Prerrequisito:** Fase 06 (entitlement ya activo y store en contenedor de grupo — FR-030b) y Fase 09 aprobadas.
 - **Contexto:** 🪆 `NESTED` — ajusta la configuración del `ModelContainer` de la Fase 06; conviene el contexto de persistencia cargado.
 - **Test-first:** test que construye el `ModelContainer` con `ModelConfiguration(groupContainer:)`, escribe una entidad y la lee desde una segunda instancia con la **misma** configuración de grupo (simula el acceso del widget al mismo store); verifica que el esquema es el compartido del núcleo.
-- **Tarea:** activar entitlement App Group en app y widget; migrar la config de producción del `ModelContainer` (Fase 06) al contenedor de grupo; enlazar el esquema del núcleo en el target widget (el target ya existe y comparte el núcleo actual — verificar que los `@Model` de la Fase 06 tengan membership en la extensión).
-- **DoD:** ☐ store en contenedor de App Group · ☐ dos `ModelContainer` con la misma config comparten datos · ☐ entitlement activo en ambos targets · ☐ ningún dato sensible en el store.
+- **Tarea:** verificar el entitlement activo en ambos targets y el acceso de la extensión al store compartido; confirmar que los `@Model` de la Fase 06 tienen membership en la extensión (la membership es por archivo).
+- **DoD:** ☐ store en contenedor de App Group · ☐ dos `ModelContainer` con la misma config comparten datos · ☐ entitlement verificado en ambos targets · ☐ ningún dato sensible en el store.
 
 ### ☐ 11-T002 — Miniatura de portada en el store compartido
 - **Prerrequisito:** 11-T001, Fase 07 (ImageLoader).
