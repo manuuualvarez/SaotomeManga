@@ -101,3 +101,9 @@ UI de registro/login (Fase 05), sincronización de colección (Fase 09).
 ## Riesgos / notas
 - Añadir un test de integración de dispositivo (marcado, no CI) que valide Keychain real.
 - Documentar política de expiración del refresh (30 días) y comportamiento offline (usar access en memoria mientras dure).
+- **Nota (2026-07-18) — sin capability Keychain Sharing (deliberado):** el acceso básico a Keychain no
+  requiere capability alguna (access group implícito del App ID); Keychain Sharing solo haría falta para
+  compartir ítems entre targets, y este proyecto lo excluye por diseño: el widget no hace auth ni red
+  (NFR-023 Fase 11) y ningún secreto sale del proceso de la app (NFR-024, constitución §6). Si alguna
+  extensión futura necesitara llamadas autenticadas, sería un cambio de spec con decisión documentada,
+  no un checkbox olvidado.
