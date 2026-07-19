@@ -45,7 +45,7 @@ Language convention: prose/docs in Spanish; identifiers, requirement IDs (`FR-##
 
 ## Architecture
 
-Strict layering with one-directional dependencies. Layers are folders inside the app target (`Domain/`, `Application/`, `Infrastructure/`) — no module boundaries enforce this, so discipline comes from convention and review:
+Strict layering with one-directional dependencies. Layers are folders inside the app target (`Presentation/`, `Application/`, `Domain/`, `Infrastructure/`) — no module boundaries enforce this, so discipline comes from convention and review. The committed folder map (which subfolder each phase creates) lives in the PLAN of `Docs/MDs/PHASE-01-project-setup.md`; create subfolders only when their phase arrives:
 
 ```
 Presentation (SwiftUI views + @Observable state)

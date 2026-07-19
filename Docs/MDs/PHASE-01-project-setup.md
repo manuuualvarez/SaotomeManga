@@ -2,7 +2,7 @@
 
 - **Versión objetivo:** Infraestructura · **Depende de:** Fase 00 (constitución)
 - **Rama sugerida:** `001-project-setup`
-- **Estado:** ✅ **Cerrada (2026-07-18)** — T001..T005 completas. Desviaciones documentadas: Widget diferido a Fase 11 (D-008); build de CI auto-desactivado hasta que los runners de GitHub traigan Xcode 27 (D-010).
+- **Estado:** ✅ **Cerrada (2026-07-18)** — T001..T006 completas (T006 añadida a posteriori: mapa de carpetas + capa Presentation). Desviaciones documentadas: Widget diferido a Fase 11 (D-008); build de CI auto-desactivado hasta que los runners de GitHub traigan Xcode 27 (D-010).
 
 > Objetivo: dejar el esqueleto compilando con Swift 6.2 en concurrencia estricta, el núcleo por capas
 > compartido (carpetas, sin Swift Packages — constitución v1.1.0), el arnés de Swift Testing y la
@@ -45,19 +45,29 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
 
 ## PLAN — Cómo (técnico)
 
-- **Estructura de repositorio** (sin packages; capas como carpetas del target)
+- **Estructura de repositorio** (sin packages; capas como carpetas del target). **Mapa comprometido
+  (01-T006):** las 4 capas de la constitución existen desde la Fase 01; los subfolders anotados con
+  `F##` los crea esa fase al llegar — no se crean carpetas vacías por adelantado. Nota: Apple no
+  publica una estructura oficial de carpetas; este mapa es el contrato del proyecto.
   ```
   SaotomeManga/                      (repo)
-  ├── Docs/MDs/ · memory/constitution.md · specs/…
-  ├── Config/ (Debug.xcconfig, Release.xcconfig, Shared.xcconfig)   ← 01-T004
+  ├── Docs/MDs/ · Docs/ADR/ · specs/<fase>/contracts/ (golden files, F02+)
+  ├── Config/                        (xcconfig + App-Info.plist — 01-T004)
   ├── SaotomeManga/                  (target multiplataforma iOS/iPadOS/visionOS)
-  │   ├── Domain/                    (modelos puros, protocolos, errores)
+  │   ├── SaotomeMangaApp.swift      (entry point — raíz por convención)
+  │   ├── Presentation/              (vistas SwiftUI + estado @Observable de UI)
+  │   │   └── Auth/ F05 · Catalog/ F07 · Search/ F08 · Collection/ F09 · Shared/ F07+
   │   ├── Application/               (casos de uso, stores @Observable)
-  │   ├── Infrastructure/            (URLSession, Keychain, SwiftData…)
-  │   ├── SaotomeMangaApp.swift · ContentView.swift · Assets.xcassets
+  │   │   └── UseCases/ F02+ · Stores/ F05+
+  │   ├── Domain/                    (modelos puros, protocolos, errores — sin frameworks)
+  │   │   └── Models/ F02 · Repositories/ F02 · Errors/ F02
+  │   ├── Infrastructure/            (implementaciones de protocolos)
+  │   │   └── Configuration/ hoy · Networking/ F03 · Security/ F04 · Persistence/ F06
+  │   └── Assets.xcassets · Resources/ (String Catalog — F05/F07)
   ├── SaotomeMangaTests/             (Swift Testing; unit + contract + integration)
   ├── SaotomeMangaUITests/           (XCUITest)
   ├── MisMangasWidget/               (Widget extension — se crea a más tardar en Fase 11)
+  ├── Scripts/git-hooks/ · .github/workflows/
   └── SaotomeManga.xcodeproj
   ```
 - **Ajustes de compilación clave** (a fijar y verificar):
@@ -176,6 +186,15 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
   el commit de la violación — hizo falta `--no-verify` para subir la prueba) · ☑ lint sin errores
   (SwiftLint `--strict` + SwiftFormat `--lint` limpios en local y en CI). Nota: la vertiente
   "warning de concurrencia rompe CI" queda cubierta por el gate local vía MCP hasta D-010.
+
+### ☑ 01-T006 — Mapa de carpetas del target + capa Presentation ✅ 2026-07-18 (añadida a posteriori)
+- **Prerrequisito:** 01-T001. · **Contexto:** 🪆 `NESTED` — ajuste sobre la estructura recién creada.
+- **Motivación:** la Fase 01 creó 3 de las 4 capas; `ContentView.swift` quedaba en la raíz sin carpeta
+  `Presentation/`, y el mapa de carpetas futuro no estaba comprometido por escrito.
+- **Tarea:** crear `Presentation/` y mover `ContentView.swift` (vía MCP `XcodeMakeDir`/`XcodeMV`);
+  documentar el mapa completo de carpetas por fase en el PLAN (subfolders se crean al llegar su fase).
+- **DoD:** ☑ 4 capas presentes como carpetas · ☑ mapa comprometido en el PLAN · ☑ 10/10 tests verdes
+  tras el movimiento (incl. UITest de arranque) · ☑ 0 warnings.
 
 ---
 
