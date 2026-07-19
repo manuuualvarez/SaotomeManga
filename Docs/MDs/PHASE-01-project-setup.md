@@ -2,7 +2,7 @@
 
 - **Versión objetivo:** Infraestructura · **Depende de:** Fase 00 (constitución)
 - **Rama sugerida:** `001-project-setup`
-- **Estado:** ✅ **Cerrada (2026-07-18)** — T001..T006 completas (T006 añadida a posteriori: mapa de carpetas + capa Presentation). Desviaciones documentadas: Widget diferido a Fase 11 (D-008); build de CI auto-desactivado hasta que los runners de GitHub traigan Xcode 27 (D-010).
+- **Estado:** ✅ **Cerrada (2026-07-18)** — T001..T006 completas (T006 añadida a posteriori: mapa de carpetas + capa Presentation). Desviaciones documentadas: Widget diferido a Fase 11 (D-008; **enmendada**: el target se creó el 2026-07-18 tras la Fase 02 — ver enmienda en D-008); build de CI auto-desactivado hasta que los runners de GitHub traigan Xcode 27 (D-010).
 
 > Objetivo: dejar el esqueleto compilando con Swift 6.2 en concurrencia estricta, el núcleo por capas
 > compartido (carpetas, sin Swift Packages — constitución v1.1.0), el arnés de Swift Testing y la
@@ -66,7 +66,7 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
   │   └── Assets.xcassets · Resources/ (String Catalog — F05/F07)
   ├── SaotomeMangaTests/             (Swift Testing; unit + contract + integration)
   ├── SaotomeMangaUITests/           (XCUITest)
-  ├── MisMangasWidget/               (Widget extension — se crea a más tardar en Fase 11)
+  ├── MisMangasWidget/               (target MisMangasWidgetExtension — creado ✓ 2026-07-18, enmienda D-008)
   ├── Scripts/git-hooks/ · .github/workflows/
   └── SaotomeManga.xcodeproj
   ```
@@ -120,6 +120,17 @@ Cualquier modelo de dominio real, red, persistencia o UI (se abordan en 02+). Aq
   a las 4 configuraciones de test (edición de pbxproj autorizada). Verificado: 5/5 tests y 0 warnings en
   `Apple Vision Pro (27.0)`. La **Widget extension se difiere a la apertura de la Fase 11** (se creará en
   Xcode UI; el núcleo se compartirá por target membership).
+  **Enmienda (2026-07-18, tras cerrar la Fase 02):** por decisión del usuario (el target es configuración
+  estructural del proyecto), la extensión se creó adelantada: target **`MisMangasWidgetExtension`**
+  (plantilla Widget Extension iOS, sin Live Activity/Control/App Intent, embebido en la app, esquema
+  propio; bundle `cloud.manuelalvarez.SaotomeManga.MisMangasWidget`). El usuario alineó en Build Settings:
+  `SWIFT_VERSION = 6.0`, `SWIFT_TREAT_WARNINGS_AS_ERRORS = YES`, `IPHONEOS_DEPLOYMENT_TARGET = 26.0`
+  (la plantilla ya traía `SWIFT_APPROACHABLE_CONCURRENCY` y MemberImportVisibility; el aislamiento por
+  defecto resuelve `nonisolated`). Núcleo compartido por target membership de Domain/Application/
+  Infrastructure (Xcode lo registró como excepciones **por archivo**: los archivos nuevos del núcleo
+  deben marcarse también para el widget al crearse). Verificado por MCP: extensión compilada/firmada/
+  validada en el build del esquema `SaotomeManga`, 0 warnings, 68/68 tests. El **App Group y el widget
+  real siguen siendo de la Fase 11**; el contenido actual es la plantilla.
 - **D-009 (2026-07-18) — Cableado de configuración por entorno (edición de pbxproj autorizada).**
   `Config/{Shared,Debug,Release}.xcconfig` + `Secrets.xcconfig` (gitignored, App-Token real) +
   `Secrets.example.xcconfig` + `Config/App-Info.plist` parcial (claves `$(API_BASE_URL)`/`$(APP_TOKEN)`,

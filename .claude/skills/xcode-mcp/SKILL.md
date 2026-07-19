@@ -28,10 +28,16 @@ open it.
 
 ## Project state (verified)
 
-- Single scheme: `SaotomeManga` (shared). Typical active destination: `iPhone 17 Pro (27.0)`.
+- Schemes: `SaotomeManga` (shared, the one with the test plan — **always work on this one**) and
+  `MisMangasWidgetExtension` (widget target, no tests). Typical active destination: `iPhone 17 Pro (27.0)`.
+  **Gotcha:** Xcode may silently activate another scheme (e.g. after creating a target); if `RunAllTests`
+  reports an unexpected test plan or 0 tests, run `XcodeSwitchScheme { schemeName: "SaotomeManga" }`.
 - Available simulators: iPhone 17 / Pro / Pro Max / 17e / Air and iPads on OS **26.5** and **27.0**,
   plus `Apple Vision Pro (27.0)` (visionOS).
 - Test targets: `SaotomeMangaTests` (Swift Testing) and `SaotomeMangaUITests` (XCUITest).
+- Target `MisMangasWidgetExtension` shares the core (Domain/Application/Infrastructure) via **per-file**
+  membership exceptions: new core files must also be added to the widget target (File Inspector) —
+  `XcodeWrite` alone registers them only in the folder's owning target.
 
 ## Workflows
 
@@ -75,8 +81,9 @@ open it.
 - `XcodeListRunDestinations` / `XcodeSwitchRunDestination { displayTitle }` — use the exact
   `displayTitle`, e.g. `"iPhone 17 Pro (27.0)"`, `"iPad (A16) (26.5)"`, `"Apple Vision Pro (27.0)"`.
   To validate visionOS (phase 12) just switch the destination; the target already supports xros.
-- `XcodeListSchemes` / `XcodeSwitchScheme { schemeName }` — today only `SaotomeManga` exists; a widget
-  scheme may appear in phase 11. Local Swift Packages are banned (constitution v1.1.0): Xcode Beta 27
+- `XcodeListSchemes` / `XcodeSwitchScheme { schemeName }` — `SaotomeManga` (tests) and
+  `MisMangasWidgetExtension` (widget, created 2026-07-18) exist; keep `SaotomeManga` active for
+  build/test. Local Swift Packages are banned (constitution v1.1.0): Xcode Beta 27
   does not integrate their test targets from an `.xcodeproj`, so never propose one.
 
 ### 6. Files: project navigator, not filesystem

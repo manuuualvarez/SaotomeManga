@@ -4,6 +4,14 @@
 - **Rama sugerida:** `011-widget`
 - **Estado:** ☐ Pendiente
 
+> **Nota previa (2026-07-18):** el target **`MisMangasWidgetExtension` ya existe** — se creó adelantado
+> tras la Fase 02 por decisión del usuario (es configuración estructural; ver enmienda D-008 en
+> `PHASE-01-project-setup.md`), con Swift 6 estricto + warnings-as-errors y el núcleo
+> (Domain/Application/Infrastructure) compartido por target membership. Hoy contiene la **plantilla** de
+> Xcode. Sigue siendo trabajo de ESTA fase: App Group + store compartido, provider, vistas, refresco y
+> deep-link. Ojo: la membership quedó registrada **por archivo** — los archivos del núcleo creados en
+> fases posteriores (p. ej. los `@Model` de la Fase 06) deben marcarse también para el widget.
+
 > Objetivo: cumplir el requisito Deluxe de **widget estático** que muestra los mangas que el usuario está leyendo
 > y por qué tomo va. El widget **consume SwiftData directamente**: al activar el **App Group** compartido entre app
 > y widget, el sistema propaga automáticamente el almacén de SwiftData a ambos targets (Xcode 27), de modo que el
@@ -60,7 +68,7 @@ Widgets interactivos con App Intents de acción (posible extra futuro); Live Act
 - **Prerrequisito:** Fase 06 y Fase 09 aprobadas.
 - **Contexto:** 🪆 `NESTED` — ajusta la configuración del `ModelContainer` de la Fase 06; conviene el contexto de persistencia cargado.
 - **Test-first:** test que construye el `ModelContainer` con `ModelConfiguration(groupContainer:)`, escribe una entidad y la lee desde una segunda instancia con la **misma** configuración de grupo (simula el acceso del widget al mismo store); verifica que el esquema es el compartido del núcleo.
-- **Tarea:** activar entitlement App Group en app y widget; migrar la config de producción del `ModelContainer` (Fase 06) al contenedor de grupo; enlazar el esquema del núcleo en el target widget.
+- **Tarea:** activar entitlement App Group en app y widget; migrar la config de producción del `ModelContainer` (Fase 06) al contenedor de grupo; enlazar el esquema del núcleo en el target widget (el target ya existe y comparte el núcleo actual — verificar que los `@Model` de la Fase 06 tengan membership en la extensión).
 - **DoD:** ☐ store en contenedor de App Group · ☐ dos `ModelContainer` con la misma config comparten datos · ☐ entitlement activo en ambos targets · ☐ ningún dato sensible en el store.
 
 ### ☐ 11-T002 — Miniatura de portada en el store compartido
